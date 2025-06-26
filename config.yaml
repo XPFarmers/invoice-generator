@@ -1,0 +1,12 @@
+company:
+  name: Company Name
+  address: Street, Somewhere, else
+  phone: 066 323 6960
+  facebook: fb/link
+  email: info@exmaple.co.za
+  logo: "./assets/logo.png"
+  banking:
+    name: Person
+    bank: bank
+    type: savings
+    account: 123 456 7890
