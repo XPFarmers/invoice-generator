@@ -1,21 +1,47 @@
 <script setup lang="ts">
 import ApplicationBar from '@/components/ApplicationBar.vue'
-import { RouterView, useRouter } from 'vue-router'
+import { RouterView, useRouter, useRoute } from 'vue-router'
+import { watchEffect } from 'vue'
+import { useNavigationStore } from '@/stores/navigation'
+import { Colours } from '@/utils/colours'
 
-const router = useRouter();
-
+const router = useRouter()
+const route = useRoute()
+const nav = useNavigationStore()
 
 const tabs = [
-  { icon: 'mdi-list-box-outline', title: 'Dashboard', value: 'dashboard', colour: '#dc143c' },
-  { icon: 'mdi-invoice-text-plus-outline', title: 'Generate Invoice', value: 'invoice', colour: '#32cd32' },
-  { icon: 'mdi-list-box-outline', title: 'Archived', value: 'archived', colour: '#1e90ff' },
-];
+  { icon: 'mdi-list-box-outline', title: 'Dashboard', value: 'dashboard', colour: Colours.Crimson },
+  { icon: 'mdi-invoice-text-plus-outline', title: 'Generate Invoice', value: 'invoice', colour: Colours.ForestGreen },
+  { icon: 'mdi-archive-outline', title: 'Archived', value: 'archived', colour: Colours.DodgerBlue },
+]
+
+// Sync current route with selected nav
+watchEffect(() => {
+  const current = route.path.replace('/', '')
+  nav.navigate(current)
+})
 
 const navigateToView = (view: string) => {
-  router.push({ path: view });
-};
-
+  nav.navigate(view)
+  router.push({ path: view })
+}
 </script>
+
+<template>
+  <ApplicationBar />
+
+  <v-navigation-drawer expand-on-hover rail fixed permanent :width="250">
+    <v-list>
+      <v-list-item v-for="tab in tabs" :key="tab.value" :prepend-icon="tab.icon" :title="tab.title" :value="tab.value"
+        :active="nav.section === tab.value" :color="tab.colour" class="rounded-pill non-selectable mt-2"
+        @click="navigateToView(tab.value)" />
+    </v-list>
+  </v-navigation-drawer>
+
+  <v-container fluid class="scrollable-container">
+    <RouterView />
+  </v-container>
+</template>
 
 <style>
 .scrollable-container {
@@ -23,21 +49,3 @@ const navigateToView = (view: string) => {
   overflow-y: auto;
 }
 </style>
-
-<template>
-
-  <ApplicationBar />
-
-  <v-navigation-drawer expand-on-hover rail fixed permanent :width="250">
-
-    <v-list>
-      <v-list-item v-for="tab in tabs" :key="tab.value" :prepend-icon="tab.icon" :title="tab.title" :value="tab.value"
-        :color="tab.colour" style="" class="rounded-pill non-selectable mt-2"
-        @click="navigateToView(tab.value)"></v-list-item>
-    </v-list>
-
-  </v-navigation-drawer>
-  <v-container fluid class="scrollable-container">
-    <RouterView />
-  </v-container>
-</template>
