@@ -8,11 +8,60 @@
 
     <v-card elevation="4" class="mx-8" rounded="lg">
 
-      Add other invoice fileds
+      <!-- Client name -->
+      <v-row class="ml-2 mt-2 mr-2">
+        <v-col cols="12">
+          <v-text-field v-model="invoice.name" label="Client Name" type="text" outlined dense required />
+        </v-col>
+      </v-row>
+
+      <!-- Client Address -->
+      <v-row class="ml-2 mr-2">
+        <v-col cols="12">
+          <v-text-field v-model="invoice.address" label="Client Address" type="text" outlined dense required />
+        </v-col>
+      </v-row>
+
+      <!-- Time To Order -->
+      <v-row class="ml-2 mr-2">
+        <v-col cols="12">
+          <v-text-field v-model="invoice.timeToOrder" label="Time to Order" type="number" outlined dense min="0"
+            required />
+        </v-col>
+      </v-row>
+
+      <v-row class="ml-2 mr-2">
+        <v-col cols="12">
+          <v-slider v-model="invoice.depositPercentage" :min="0" :max="100" step="1" label="Deposit %"
+            thumb-label="always" :color="Colours.DodgerBlue" show-ticks>
+            <template #append>
+              <span class="font-weight-medium text-caption ml-2">
+                {{ invoice.depositPercentage }}%
+              </span>
+            </template>
+          </v-slider>
+        </v-col>
+      </v-row>
+
+      <v-row class="ml-2 mr-2 mb-4">
+        <v-col cols="6" class="text-center">
+          <div class="text-title font-weight-medium">
+            Deposit: <span :style="{ color: Colours.ForestGreen }">R {{ deposit.toFixed(2) }}</span>
+          </div>
+        </v-col>
+        <v-col cols="6" class="text-center">
+
+          <div class="text-title font-weight-medium">
+            Balance: <span :style="{ color: Colours.Crimson }">R {{ balance.toFixed(2) }}</span>
+          </div>
+        </v-col>
+      </v-row>
+
+
 
     </v-card>
 
-    <v-card class="mx-8 mt-6 mb-14" elevation="4" rounded="lg">
+    <v-card class="mx-8 mt-6 mb-6" elevation="4" rounded="lg">
       <v-card-title class="text-h6 font-weight-bold mt-4 mb-4">Add Line Items</v-card-title>
 
       <!-- <v-card-text>
@@ -72,7 +121,7 @@
       </v-table>
     </v-card>
 
-    <v-card class="mx-8 mt-8" elevation="4" rounded="lg">
+    <v-card class="mx-8 mt-4" elevation="4" rounded="lg">
       <v-card-text>
         <!-- Entry Form Fields -->
         <v-row>
@@ -83,7 +132,8 @@
             <v-text-field v-model="formData.description" label="Description" type="text" outlined dense required />
           </v-col>
           <v-col cols="12" md="4">
-            <v-text-field v-model="formData.amount" label="Amount" type="number" outlined dense min="0" required />
+            <v-text-field v-model="formData.amount" label="Amount" type="number" outlined dense min="0" prefix="R"
+              required />
           </v-col>
         </v-row>
 
@@ -128,6 +178,14 @@ const formData = ref({
 const entries = computed(() => invoice.value.getLineItems())
 const grandTotal = computed(() => invoice.value.getGrandTotal())
 
+const deposit = computed(() => {
+  return grandTotal.value * (invoice.value.depositPercentage / 100)
+})
+
+const balance = computed(() => {
+  return grandTotal.value - deposit.value
+})
+
 
 function clear() {
   formData.value.qty = 0
@@ -138,6 +196,7 @@ function clear() {
 function clearForm() {
   clear()
   clearEntries()
+  invoice.value = new GenerateInvoice()
 }
 
 function clearEntries() {
@@ -162,7 +221,7 @@ function addEntry() {
 // }
 
 async function submitForm() {
-  console.log("Invoice = ", invoice.value)
+  // console.log("Invoice = ", invoice.value)
   // const payload = entries.value.map(e => e.toJSON())
 
   // try {
