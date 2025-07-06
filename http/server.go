@@ -21,12 +21,7 @@ func NewServer(repo *invoices.Repository, config config.Config, staticFiles fs.F
 	app.Use(requestid.New())
 	app.Use(cors.New())
 
-	// Serve the compile html
-	// app.Static("/", "./html")
-	app.Use("/", filesystem.New(filesystem.Config{
-		Root: http.FS(staticFiles),
-	}))
-
+	// API Routes - Define these BEFORE the filesystem middleware
 	app.Get("/metrics", monitor.New())
 	// app.Get("/metrics", monitor.New(monitor.Config{Title: "MyService Metrics Page"}))
 
@@ -37,7 +32,11 @@ func NewServer(repo *invoices.Repository, config config.Config, staticFiles fs.F
 	app.Get("/invoices", func(c *fiber.Ctx) error {
 		invoices, err := repo.GetAll()
 		if err != nil {
-			return c.Status(500).SendString("Could not fetch invoices")
+			return c.Status(500).JSON(fiber.Map{
+				"error":   "Failed to fetch invoices",
+				"message": "Database query failed",
+				"code":    "FETCH_ERROR",
+			})
 		}
 		return c.JSON(invoices)
 	})
@@ -45,7 +44,11 @@ func NewServer(repo *invoices.Repository, config config.Config, staticFiles fs.F
 	app.Get("/invoices/archived", func(c *fiber.Ctx) error {
 		archived, err := repo.GetArchived()
 		if err != nil {
-			return c.Status(500).SendString("Failed to fetch archived")
+			return c.Status(500).JSON(fiber.Map{
+				"error":   "Failed to fetch archived invoices",
+				"message": "Database query failed",
+				"code":    "FETCH_ARCHIVED_ERROR",
+			})
 		}
 		return c.JSON(archived)
 	})
@@ -55,15 +58,28 @@ func NewServer(repo *invoices.Repository, config config.Config, staticFiles fs.F
 
 		invoice, err := invoices.GenerateInvoice(body)
 		if err != nil {
-			return c.Status(400).SendString("Invalid input: " + err.Error())
+			return c.Status(400).JSON(fiber.Map{
+				"error":   "Invalid input",
+				"message": err.Error(),
+				"code":    "VALIDATION_ERROR",
+			})
 		}
 
 		if err := repo.Create(invoice); err != nil {
-			return c.Status(500).SendString("Failed to save invoice: " + err.Error())
+			return c.Status(500).JSON(fiber.Map{
+				"error":   "Failed to save invoice",
+				"message": err.Error(),
+				"code":    "SAVE_ERROR",
+			})
 		}
 
 		return c.Status(201).JSON(invoice)
 	})
+
+	// Serve static files AFTER API routes
+	app.Use("/", filesystem.New(filesystem.Config{
+		Root: http.FS(staticFiles),
+	}))
 
 	// app.Post("/lineItems", func(c *fiber.Ctx) error {
 	// var items []invoices.LineItem

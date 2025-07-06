@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Colours } from '@/utils/colours'
 import { useRouter } from 'vue-router'
-
+import DashboardComponent from '@/components/DashboardComponent.vue'
 const router = useRouter()
 const goToInvoice = () => {
   router.push('/invoice')
@@ -9,7 +9,7 @@ const goToInvoice = () => {
 </script>
 
 <template>
-  Dashboard
+  <DashboardComponent />
   <v-fab
     :color="Colours.ForestGreen"
     icon="mdi-plus"

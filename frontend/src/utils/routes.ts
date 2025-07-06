@@ -6,4 +6,5 @@ const base = import.meta.env.DEV ? 'http://localhost:8080' : ''
 export const Routes = {
   LineItems: base + '/lineItems',
   GenerateInvoice: base + '/invoice',
+  Invoices: base + '/invoices'
 }
