@@ -51,15 +51,45 @@ func NewServer(repo *invoices.Repository, config config.Config, staticFiles fs.F
 	})
 
 	app.Post("/invoice", func(c *fiber.Ctx) error {
-		var invoice invoices.Invoice
-		if err := c.BodyParser(&invoice); err != nil {
-			return c.Status(400).SendString("Invalid input")
+		body := c.Body()
+
+		invoice, err := invoices.GenerateInvoice(body)
+		if err != nil {
+			return c.Status(400).SendString("Invalid input: " + err.Error())
 		}
-		if err := repo.Create(&invoice); err != nil {
-			return c.Status(500).SendString("Could not create invoice")
+
+		if err := repo.Create(invoice); err != nil {
+			return c.Status(500).SendString("Failed to save invoice: " + err.Error())
 		}
-		return c.JSON(invoice)
+
+		return c.Status(201).JSON(invoice)
 	})
+
+	// app.Post("/lineItems", func(c *fiber.Ctx) error {
+	// var items []invoices.LineItem
+
+	// if err := c.BodyParser(&items); err != nil {
+	// 	fmt.Println(err)
+	// 	return c.Status(400).SendString("Invalid input: " + err.Error())
+	// }
+
+	// // Generate the invoice with deposit, balance, total, etc.
+	// invoice := invoices.GenerateInvoice(items)
+
+	// // Optional: Add metadata (you can enhance this later)
+	// invoice.ClientName = "Auto Generated"
+	// invoice.IssueDate = "2024-06-27"
+
+	// // Save using the repository
+	// if err := repo.Create(invoice); err != nil {
+	// 	return c.Status(500).SendString("Failed to save invoice: " + err.Error())
+	// }
+
+	// return c.Status(201).JSON(invoice)
+	// 	fmt.Println(string(c.Body()))
+
+	// 	return c.Status(200).SendString("Success")
+	// })
 
 	return app
 }

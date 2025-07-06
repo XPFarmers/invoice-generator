@@ -14,6 +14,9 @@ import router from './router'
 const vuetify = createVuetify({
   components,
   directives,
+  theme: {
+    defaultTheme: 'dark',
+  },
 })
 
 const app = createApp(App)
@@ -23,4 +26,3 @@ app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
-
