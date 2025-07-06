@@ -11,7 +11,12 @@ const nav = useNavigationStore()
 
 const tabs = [
   { icon: 'mdi-list-box-outline', title: 'Dashboard', value: 'dashboard', colour: Colours.Crimson },
-  { icon: 'mdi-invoice-text-plus-outline', title: 'Generate Invoice', value: 'invoice', colour: Colours.ForestGreen },
+  {
+    icon: 'mdi-invoice-text-plus-outline',
+    title: 'Generate Invoice',
+    value: 'invoice',
+    colour: Colours.ForestGreen,
+  },
   { icon: 'mdi-archive-outline', title: 'Archived', value: 'archived', colour: Colours.DodgerBlue },
 ]
 
@@ -32,9 +37,17 @@ const navigateToView = (view: string) => {
 
   <v-navigation-drawer expand-on-hover rail fixed permanent :width="250">
     <v-list>
-      <v-list-item v-for="tab in tabs" :key="tab.value" :prepend-icon="tab.icon" :title="tab.title" :value="tab.value"
-        :active="nav.section === tab.value" :color="tab.colour" class="rounded-pill non-selectable mt-2"
-        @click="navigateToView(tab.value)" />
+      <v-list-item
+        v-for="tab in tabs"
+        :key="tab.value"
+        :prepend-icon="tab.icon"
+        :title="tab.title"
+        :value="tab.value"
+        :active="nav.section === tab.value"
+        :color="tab.colour"
+        class="rounded-pill non-selectable mt-2"
+        @click="navigateToView(tab.value)"
+      />
     </v-list>
   </v-navigation-drawer>
 

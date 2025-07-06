@@ -9,8 +9,12 @@ const goToInvoice = () => {
 </script>
 
 <template>
-
   Dashboard
-  <v-fab :color="Colours.ForestGreen" icon="mdi-plus" location="right bottom" @click="goToInvoice" app></v-fab>
-
+  <v-fab
+    :color="Colours.ForestGreen"
+    icon="mdi-plus"
+    location="right bottom"
+    @click="goToInvoice"
+    app
+  ></v-fab>
 </template>
