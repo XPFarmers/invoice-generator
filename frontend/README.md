@@ -2,6 +2,26 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
+## Environment Configuration
+
+This project automatically handles API routing based on the environment:
+
+- **Development** (`npm run dev`): API calls go to `http://localhost:8080`
+- **Production** (`npm run build`): API calls use relative paths (same domain)
+
+The routing is configured in `src/utils/routes.ts` using Vite's built-in environment flags:
+- `import.meta.env.DEV` - true in development mode
+- `import.meta.env.PROD` - true in production mode
+
+### Development Server Setup
+
+The Vite dev server runs on port 3000 and includes a proxy configuration to forward API calls to your Go backend on port 8080. This means you can run both servers simultaneously:
+
+1. Start your Go backend: `go run main.go` (runs on port 8080)
+2. Start the frontend dev server: `npm run dev` (runs on port 3000)
+
+API calls from the frontend will be automatically proxied to the backend.
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).

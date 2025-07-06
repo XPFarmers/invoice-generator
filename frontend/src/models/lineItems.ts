@@ -16,7 +16,7 @@ export class LineItem {
       qty: String(this.qty),
       description: this.description,
       amount: this.amount.toFixed(2),
-      total: this.total.toFixed(2)
+      total: this.total.toFixed(2),
     }
   }
 }

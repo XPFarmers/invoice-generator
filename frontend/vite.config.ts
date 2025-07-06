@@ -10,6 +10,19 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  server: {
+    proxy: {
+      // Proxy API calls to your Go backend
+      '/lineItems': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '/invoice': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     outDir: '../html',
     emptyOutDir: true, // also necessary

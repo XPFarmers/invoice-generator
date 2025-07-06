@@ -7,14 +7,6 @@ export class GenerateInvoice {
   depositPercentage: number = 0
   lineItems: LineItem[] = []
 
-  // constructor(name: string, address: string, timeToOrder: string, depositpercentage: number) {
-  //   this.name = name
-  //   this.address = address
-  //   this.timeToOrder = timeToOrder
-  //   this.depositpercentage = depositpercentage
-  //   this.lineItems = []
-  // }
-
   setClientName(name: string) {
     this.name = name
   }
@@ -49,7 +41,7 @@ export class GenerateInvoice {
       clientAddress: this.address,
       timeToOrder: this.timeToOrder,
       depositPercentage: this.depositPercentage.toFixed(0),
-      lineItems: this.lineItems.map(item => item.toJSON())
+      lineItems: this.lineItems.map((item) => item.toJSON()),
     }
   }
 }
